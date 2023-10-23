@@ -25,15 +25,18 @@ async function initializeDatabase() {
       );
     `);
 
-    // Items table
+    // Items table with foreign keys
     await connection.query(`
       CREATE TABLE IF NOT EXISTS items (
         ID INT AUTO_INCREMENT PRIMARY KEY,
-        categoryID INT NOT NULL REFERENCES categories(ID),
+        categoryID INT NOT NULL,
+        categoryName VARCHAR(255) NOT NULL,
         name VARCHAR(255) NOT NULL,
         tags VARCHAR(255) NOT NULL,
         url VARCHAR(255) NOT NULL,
-        subweight INT NOT NULL
+        subweight INT NOT NULL,
+        FOREIGN KEY (categoryID) REFERENCES categories(ID)
+        FOREIGN KEY (categoryName) REFERENCES categories(name)
       );
     `);
 

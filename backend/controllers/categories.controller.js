@@ -18,7 +18,7 @@ exports.createCategory = async (req, res) => {
       "INSERT INTO categories (name, weight) VALUES (?, ?)",
       [name, weight]
     );
-    res.status(201).json({ id: result.insertId, name, weight });
+    res.status(201).json({ ID: result.insertId, name, weight });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -33,7 +33,7 @@ exports.editCategory = async (req, res) => {
       "UPDATE categories SET name = ?, weight = ? WHERE ID = ?",
       [name, weight, id]
     );
-    res.json({ id, name, weight });
+    res.json({ ID: id, name, weight });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -44,7 +44,7 @@ exports.deleteCategory = async (req, res) => {
     const connection = await initializeDatabase;
     const { id } = req.params;
     await connection.execute("DELETE FROM categories WHERE ID = ?", id);
-    res.json({ id });
+    res.json({ ID: id });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

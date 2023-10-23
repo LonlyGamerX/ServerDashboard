@@ -10,7 +10,6 @@ const port = process.env.PORT || 5431;
 app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
 
 // Import the database connection from db-tables.js
 const db = require("./db/db-tables");
@@ -21,20 +20,23 @@ async function startServer() {
     next();
   });
 
-  app.use("/v1/categories", require("./routes/categories.routes"));
-  app.use("/v1/items", require("./routes/items.routes"));
+  app.use("/server/v1/categories", require("./routes/categories.routes"));
+  app.use("/server/v1/items", require("./routes/items.routes"));
 
   app.get("/", (req, res) => {
     res.status(200).json({
       info: {
-        message: "Welcome to the mc server template backend API!",
-        port: port,
+        message: "Welcome to the self host server dashboard!",
+        port: "Running on port " + port,
       },
       endpoints: {
         categories: `http://localhost:${port}/server/v1/categories`,
         items: `http://localhost:${port}/server/v1/items`,
         info: `http://localhost:${port}/server/v1/info`,
         users: `http://localhost:${port}/server/v1/admin/users`,
+      },
+      Credits: {
+        madeBy: "Scott Zangenberg (LonlyGamerX)",
       },
     });
   });
