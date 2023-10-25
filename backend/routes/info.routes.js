@@ -1,10 +1,10 @@
 const express = require("express");
 const {
-  getAllItems,
-  createItem,
-  editItem,
-  deleteItem,
-} = require("../controllers/items.controller");
+  getAllInfo,
+  createInfo,
+  editInfo,
+  deleteInfo,
+} = require("../controllers/info.controller");
 const initializeDatabase = require("../db/db-tables");
 
 const router = express.Router();
@@ -15,9 +15,9 @@ router.use(async (req, res, next) => {
   next();
 });
 
-router.get("/", getAllItems);
-router.post("/", createItem);
-router.put("/:id", editItem);
-router.delete("/:id", deleteItem);
+router.get("/", getAllInfo);
+router.post("/", createInfo);
+router.put("/:id", editInfo);
+router.delete("/:id", deleteInfo);
 
 module.exports = router;

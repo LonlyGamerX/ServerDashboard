@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const session = require("express-session"); // Import express-session
 const dotenv = require("dotenv");
 
 dotenv.config();
@@ -10,6 +11,14 @@ const port = process.env.PORT || 5431;
 app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(
+  session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 
 // Import the database connection from db-tables.js
 const db = require("./db/db-tables");
@@ -22,12 +31,14 @@ async function startServer() {
 
   app.use("/server/v1/categories", require("./routes/categories.routes"));
   app.use("/server/v1/items", require("./routes/items.routes"));
+  app.use("/server/v1/info", require("./routes/info.routes"));
+  app.use("/server/v1/admin/users", require("./routes/users.routes"));
 
   app.get("/", (req, res) => {
     res.status(200).json({
       info: {
         message: "Welcome to the self host server dashboard!",
-        port: "Running on port " + port,
+        port: port,
       },
       endpoints: {
         categories: `http://localhost:${port}/server/v1/categories`,

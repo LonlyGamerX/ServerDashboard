@@ -5,13 +5,13 @@ const {
   deleteCategory,
   editCategory,
 } = require("../controllers/categories.controller");
-const initializeDatabase = require('../db/db-tables'); // Import initializeDatabase
+const initializeDatabase = require("../db/db-tables");
 
 const router = express.Router();
 
 // Middleware to pass the MySQL connection to the controller
 router.use(async (req, res, next) => {
-  req.db = await initializeDatabase; // Get the database connection
+  req.db = await initializeDatabase;
   next();
 });
 

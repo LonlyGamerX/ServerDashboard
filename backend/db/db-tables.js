@@ -1,22 +1,18 @@
-// Import the MySQL driver
 const mysql = require("mysql2/promise");
 const dotenv = require("dotenv");
 dotenv.config();
 
-// initialize the MySQL database connection
 async function initializeDatabase() {
   try {
     const connection = await mysql.createConnection({
-      host: process.env.DB_HOST || "localhost", // Use process.env here
-      user: process.env.DB_USER, // Use process.env here
-      password: process.env.DB_PASSWORD, // Use process.env here
-      database: process.env.DB_NAME, // Use process.env here
+      host: process.env.DB_HOST || "localhost",
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
     });
 
-    // Enable foreign key support (if needed)
     await connection.query("SET FOREIGN_KEY_CHECKS = 1");
 
-    // Categories table
     await connection.query(`
       CREATE TABLE IF NOT EXISTS categories (
         ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -25,22 +21,18 @@ async function initializeDatabase() {
       );
     `);
 
-    // Items table with foreign keys
     await connection.query(`
       CREATE TABLE IF NOT EXISTS items (
         ID INT AUTO_INCREMENT PRIMARY KEY,
         categoryID INT NOT NULL,
-        categoryName VARCHAR(255) NOT NULL,
         name VARCHAR(255) NOT NULL,
         tags VARCHAR(255) NOT NULL,
         url VARCHAR(255) NOT NULL,
         subweight INT NOT NULL,
         FOREIGN KEY (categoryID) REFERENCES categories(ID)
-        FOREIGN KEY (categoryName) REFERENCES categories(name)
       );
     `);
 
-    // Info Tables
     await connection.query(`
       CREATE TABLE IF NOT EXISTS info (
         ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -50,7 +42,6 @@ async function initializeDatabase() {
       );
     `);
 
-    // Users table
     await connection.query(`
       CREATE TABLE IF NOT EXISTS users (
         ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -58,6 +49,25 @@ async function initializeDatabase() {
         password VARCHAR(255) NOT NULL
       );
     `);
+
+    // Check if the users table is empty
+    const [users] = await connection.execute("SELECT * FROM users");
+    if (users.length === 0) {
+      // If the table is empty, insert the default user
+      const defaultUsername = "admin";
+      const defaultPassword = "password";
+
+      // Hash the default password
+      const bcryptHash = await Bun.password.hash(defaultPassword, {
+        algorithm: "bcrypt",
+        cost: 8, // number between 4-31
+      });
+
+      await connection.execute(
+        "INSERT INTO users (username, password) VALUES (?, ?)",
+        [defaultUsername, bcryptHash]
+      );
+    }
 
     return connection;
   } catch (err) {
