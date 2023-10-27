@@ -1,0 +1,12 @@
+@import "./styles/_variables.scss";
+@import "./styles/_dark.scss";
+@import "./styles/_responsive.scss";
+
+* {
+  font-family: $font-family;
+}
+
+body {
+  background-color: $primary-lt-color;
+  color: $secondary-lt-color;
+}

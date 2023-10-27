@@ -48,9 +48,12 @@ exports.deleteInfo = async (req, res) => {
   try {
     const connection = await initializeDatabase;
     const { id } = req.params;
-    await connection.execute("DELETE FROM info WHERE ID = ?", id);
+    await connection.execute("DELETE FROM info WHERE ID = ?", [id]);
     console.log("Deleting info");
-    res.json({ ID: id });
+    res.json({
+      Message: "Info deleted successfully!",
+      ID: id,
+    });
   } catch {
     res.status(500).json({ message: err.message });
     console.log("deleteInfo Error >>> " + err);

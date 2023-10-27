@@ -1,5 +1,6 @@
 const mysql = require("mysql2/promise");
 const dotenv = require("dotenv");
+const bcrypt = require("bcrypt"); // Import the bcrypt library
 dotenv.config();
 
 async function initializeDatabase() {
@@ -57,11 +58,9 @@ async function initializeDatabase() {
       const defaultUsername = "admin";
       const defaultPassword = "password";
 
-      // Hash the default password
-      const bcryptHash = await Bun.password.hash(defaultPassword, {
-        algorithm: "bcrypt",
-        cost: 8, // number between 4-31
-      });
+      // Hash the default password using bcrypt
+      const saltRounds = 10; // You can adjust this value as needed
+      const bcryptHash = await bcrypt.hash(defaultPassword, saltRounds);
 
       await connection.execute(
         "INSERT INTO users (username, password) VALUES (?, ?)",
@@ -71,7 +70,7 @@ async function initializeDatabase() {
 
     return connection;
   } catch (err) {
-    console.error("Error initializing the database:", err.message);
+    console.error("Error initializing the database (TдT):", err.message);
     process.exit(1);
   }
 }

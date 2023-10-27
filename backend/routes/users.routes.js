@@ -1,6 +1,7 @@
 const express = require("express");
 const initializeDatabase = require("../db/db-tables");
 const {
+  authenticateUser,
   getAllUsers,
   createUser,
   editUser,
@@ -15,6 +16,7 @@ router.use(async (req, res, next) => {
 });
 
 // Protect other user routes with authentication
+router.post("/login", authenticateUser);
 router.get("/", getAllUsers);
 router.post("/", createUser);
 router.put("/:id", editUser);

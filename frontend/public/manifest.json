@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Server Dashboard",
+  "name": "Self hosted server dashboard",
   "icons": [
     {
       "src": "favicon.ico",
