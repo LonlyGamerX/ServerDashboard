@@ -12,8 +12,10 @@ async function initializeDatabase() {
       database: process.env.DB_NAME,
     });
 
+    // Enable foreign key checks
     await connection.query("SET FOREIGN_KEY_CHECKS = 1");
 
+    // categories table
     await connection.query(`
       CREATE TABLE IF NOT EXISTS categories (
         ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -22,6 +24,7 @@ async function initializeDatabase() {
       );
     `);
 
+    // items table
     await connection.query(`
       CREATE TABLE IF NOT EXISTS items (
         ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -34,6 +37,7 @@ async function initializeDatabase() {
       );
     `);
 
+    // info table
     await connection.query(`
       CREATE TABLE IF NOT EXISTS info (
         ID INT AUTO_INCREMENT PRIMARY KEY,
@@ -43,11 +47,21 @@ async function initializeDatabase() {
       );
     `);
 
+    // users table
     await connection.query(`
       CREATE TABLE IF NOT EXISTS users (
         ID INT AUTO_INCREMENT PRIMARY KEY,
         username VARCHAR(255) NOT NULL,
         password VARCHAR(255) NOT NULL
+      );
+    `);
+
+    // setting table
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS settings (
+        ID INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        value VARCHAR(255) NULL
       );
     `);
 
