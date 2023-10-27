@@ -7,6 +7,7 @@ import Navigation from "./components/Navigation";
 import AdminNavigation from "./components/AdminNavigation";
 import LoginNavigation from "./components/LoginNavigation";
 import Logout from "./components/Logout";
+import API from "./components/API";
 
 // Pages
 import Home from "./pages/Home";
@@ -24,10 +25,25 @@ function App() {
   const [user, setUser] = useState(logIn);
   const [IsAdmin, setIsAdmin] = useState(true);
 
+  useEffect(() => {
+    // Fetch settings from the API and update the title
+    const fetchSettings = async () => {
+      try {
+        const response = await API.getSettings(); // Replace with your actual API call
+        const newTitle = response.title; // Assuming your API response has a 'title' property
+        setTitle(newTitle);
+      } catch (error) {
+        console.error("Error fetching settings: ", error);
+      }
+    };
+
+    fetchSettings();
+
   // useEffect(() => {
   //   setUser(Cookies.get("user"));
   //   setIsAdmin(Cookies.get("admin"));
   // }, []);
+  
 
   useEffect(() => {
     if (!logIn) {

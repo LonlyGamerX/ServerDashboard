@@ -1,10 +1,9 @@
 import axios from "axios";
 
-const port = 5333;
-const urlendpoint = "http://localhost:" + port;
-const aboutEP = "/about";
-const loginEP = "/login/login";
-const userEP = "/user/admin";
+const port = 5431;
+const urlendpoint = `http://localhost:${port}/server/v1`;
+const settings  = "/settings";
+
 
 // Generic function to handle API requests
 const makeRequest = async (endpoint, method = "get", data = null) => {
@@ -23,12 +22,16 @@ const makeRequest = async (endpoint, method = "get", data = null) => {
   }
 };
 
-export const Login = async (email, password) => {
-  const requestData = { email, password };
-  return await makeRequest(loginEP, "post", JSON.stringify(requestData));
+export const getSettings = async () => {
+  return await makeRequest(settings, "get");
 };
 
-export const UserCreation = async (email, password, name, admin) => {
-  const requestData = { email, password, name, admin };
-  return await makeRequest(userEP, "post", JSON.stringify(requestData));
-};
+// export const Login = async (email, password) => {
+//   const requestData = { email, password };
+//   return await makeRequest(loginEP, "post", JSON.stringify(requestData));
+// };
+
+// export const UserCreation = async (email, password, name, admin) => {
+//   const requestData = { email, password, name, admin };
+//   return await makeRequest(userEP, "post", JSON.stringify(requestData));
+// };
