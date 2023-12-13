@@ -20,7 +20,7 @@ async function initializeDatabase() {
       CREATE TABLE IF NOT EXISTS Categories (
         id INT AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
         name VARCHAR(500) UNIQUE NOT NULL,
-        icon_url TEXT NOT NULL,
+        iconUrl TEXT NULL,
         weight INT NOT NULL
       );
     `);
@@ -32,7 +32,7 @@ async function initializeDatabase() {
         name TEXT NOT NULL,
         category VARCHAR(500) NOT NULL,
         url TEXT NOT NULL,
-        icon_url TEXT NOT NULL,
+        iconUrl TEXT NULL,
         weight INT NOT NULL,
         FOREIGN KEY (category) REFERENCES Categories(name)
       );
@@ -43,7 +43,7 @@ async function initializeDatabase() {
       CREATE TABLE IF NOT EXISTS Info (
         id INT AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
         title TEXT NOT NULL,
-        text_info TEXT NOT NULL
+        textInfo TEXT NOT NULL
       );
     `);
 
@@ -52,17 +52,8 @@ async function initializeDatabase() {
       CREATE TABLE IF NOT EXISTS Users (
         id INT AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
         username TEXT NOT NULL,
-        mail TEXT NOT NULL,
+        mail TEXT Null,
         password TEXT NOT NULL
-      );
-    `);
-
-    // Setting table
-    await connection.query(`
-      CREATE TABLE IF NOT EXISTS Settings (
-        id INT AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
-        name VARCHAR(255) NOT NULL,
-        value VARCHAR(255) NULL
       );
     `);
 
@@ -90,4 +81,4 @@ async function initializeDatabase() {
   }
 }
 
-module.exports = initializeDatabase();
+module.exports = initializeDatabase;

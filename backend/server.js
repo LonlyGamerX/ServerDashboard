@@ -32,15 +32,14 @@ async function startServer() {
   app.use("/server/v1/categories", require("./routes/categories.routes"));
   app.use("/server/v1/items", require("./routes/items.routes"));
   app.use("/server/v1/info", require("./routes/info.routes"));
-  app.use("/server/v1/settings", require("./routes/settings.routes"));
   app.use("/server/v1/admin/users", require("./routes/users.routes"));
 
   app.get("/", (req, res) => {
     res.status(200).json({
       info: {
-        message: "Welcome to the self host server dashboard!",
+        message: "Welcome to the selfhosted server network dashboard!",
         port: port,
-        version: "1.0.0",
+        version: "1.0",
         defaultUsername: "admin",
         defaultPassword: "password",
       },
@@ -48,7 +47,6 @@ async function startServer() {
         categories: `http://localhost:${port}/server/v1/categories`,
         items: `http://localhost:${port}/server/v1/items`,
         info: `http://localhost:${port}/server/v1/info`,
-        settings: `http://localhost:${port}/server/v1/settings`,
         users: `http://localhost:${port}/server/v1/admin/users`,
       },
       Credits: {

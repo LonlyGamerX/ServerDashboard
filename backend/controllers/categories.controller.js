@@ -2,8 +2,8 @@ const initializeDatabase = require("../db/db-tables");
 
 exports.getAllCategories = async (req, res) => {
   try {
-    const connection = await initializeDatabase;
-    const [categories] = await connection.execute("SELECT * FROM categories");
+    const connection = await initializeDatabase();
+    const [categories] = await connection.execute("SELECT * FROM Categories");
     console.log("Getting all categories");
     res.json(categories);
   } catch (err) {
@@ -14,14 +14,14 @@ exports.getAllCategories = async (req, res) => {
 
 exports.createCategory = async (req, res) => {
   try {
-    const connection = await initializeDatabase;
-    const { name, weight } = req.body;
+    const connection = await initializeDatabase();
+    const { name, iconUrl, weight } = req.body;
     const [result] = await connection.execute(
-      "INSERT INTO categories (name, weight) VALUES (?, ?)",
-      [name, weight]
+      "INSERT INTO Categories (name, iconUrl, weight) VALUES (?, ?, ?)",
+      [name, iconUrl || null, weight]
     );
     console.log("Creating category");
-    res.status(201).json({ ID: result.insertId, name, weight });
+    res.status(201).json({ ID: result.insertId, name, iconUrl, weight });
   } catch (err) {
     res.status(500).json({ message: err.message });
     console.log("createCategory Error >>> " + err);
@@ -30,15 +30,19 @@ exports.createCategory = async (req, res) => {
 
 exports.editCategory = async (req, res) => {
   try {
-    const connection = await initializeDatabase;
+    const connection = await initializeDatabase();
     const { id } = req.params;
-    const { name, weight } = req.body;
+    const { name, iconUrl, weight } = req.body;
+
+    // Handle potential undefined values
+    const updatedIconUrl = iconUrl || null;
+
     await connection.execute(
-      "UPDATE categories SET name = ?, weight = ? WHERE ID = ?",
-      [name, weight, id]
+      "UPDATE Categories SET name = ?, iconUrl = IFNULL(?, iconUrl), weight = ? WHERE id = ?",
+      [name, updatedIconUrl, weight, id]
     );
     console.log("Editing category");
-    res.json({ ID: id, name, weight });
+    res.json({ ID: id, name, iconUrl: updatedIconUrl, weight });
   } catch (err) {
     res.status(500).json({ message: err.message });
     console.log("editCategory Error >>> " + err);
@@ -47,9 +51,9 @@ exports.editCategory = async (req, res) => {
 
 exports.deleteCategory = async (req, res) => {
   try {
-    const connection = await initializeDatabase;
+    const connection = await initializeDatabase();
     const { id } = req.params;
-    await connection.execute("DELETE FROM categories WHERE ID = ?", [id]);
+    await connection.execute("DELETE FROM Categories WHERE id = ?", [id]);
     console.log("Deleting category");
     res.json({
       Message: "Category deleted successfully!",
