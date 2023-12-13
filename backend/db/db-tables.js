@@ -15,58 +15,59 @@ async function initializeDatabase() {
     // Enable foreign key checks
     await connection.query("SET FOREIGN_KEY_CHECKS = 1");
 
-    // categories table
+    // Categories table
     await connection.query(`
-      CREATE TABLE IF NOT EXISTS categories (
-        ID INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
+      CREATE TABLE IF NOT EXISTS Categories (
+        id INT AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
+        name VARCHAR(500) UNIQUE NOT NULL,
+        icon_url TEXT NOT NULL,
         weight INT NOT NULL
       );
     `);
 
-    // items table
+    // Items table
     await connection.query(`
-      CREATE TABLE IF NOT EXISTS items (
-        ID INT AUTO_INCREMENT PRIMARY KEY,
-        categoryID INT NOT NULL,
-        name VARCHAR(255) NOT NULL,
-        tags VARCHAR(255) NOT NULL,
-        url VARCHAR(255) NOT NULL,
-        subweight INT NOT NULL,
-        FOREIGN KEY (categoryID) REFERENCES categories(ID)
+      CREATE TABLE IF NOT EXISTS Items (
+        id INT AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
+        name TEXT NOT NULL,
+        category VARCHAR(500) NOT NULL,
+        url TEXT NOT NULL,
+        icon_url TEXT NOT NULL,
+        weight INT NOT NULL,
+        FOREIGN KEY (category) REFERENCES Categories(name)
       );
     `);
 
-    // info table
+    // Info table
     await connection.query(`
-      CREATE TABLE IF NOT EXISTS info (
-        ID INT AUTO_INCREMENT PRIMARY KEY,
-        icon VARCHAR(255) NOT NULL,
-        title VARCHAR(255) NOT NULL,
-        description VARCHAR(255) NOT NULL
+      CREATE TABLE IF NOT EXISTS Info (
+        id INT AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
+        title TEXT NOT NULL,
+        text_info TEXT NOT NULL
       );
     `);
 
-    // users table
+    // Users table
     await connection.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        ID INT AUTO_INCREMENT PRIMARY KEY,
-        username VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL
+      CREATE TABLE IF NOT EXISTS Users (
+        id INT AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
+        username TEXT NOT NULL,
+        mail TEXT NOT NULL,
+        password TEXT NOT NULL
       );
     `);
 
-    // setting table
+    // Setting table
     await connection.query(`
-      CREATE TABLE IF NOT EXISTS settings (
-        ID INT AUTO_INCREMENT PRIMARY KEY,
+      CREATE TABLE IF NOT EXISTS Settings (
+        id INT AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
         name VARCHAR(255) NOT NULL,
         value VARCHAR(255) NULL
       );
     `);
 
-    // Check if the users table is empty
-    const [users] = await connection.execute("SELECT * FROM users");
+    // Check if the Users table is empty
+    const [users] = await connection.execute("SELECT * FROM Users");
     if (users.length === 0) {
       // If the table is empty, insert the default user
       const defaultUsername = "admin";
@@ -77,7 +78,7 @@ async function initializeDatabase() {
       const bcryptHash = await bcrypt.hash(defaultPassword, saltRounds);
 
       await connection.execute(
-        "INSERT INTO users (username, password) VALUES (?, ?)",
+        "INSERT INTO Users (username, password) VALUES (?, ?)",
         [defaultUsername, bcryptHash]
       );
     }
