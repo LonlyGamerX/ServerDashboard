@@ -1,22 +1,17 @@
+// users.routes.js
 const express = require("express");
 const initializeDatabase = require("../db/db-tables");
 const {
-  authenticateUser,
   getAllUsers,
   createUser,
   editUser,
   deleteUser,
-} = require("../controllers/users.controller"); // Import the missing getAllUsers function
+} = require("../controllers/users.controller");
+const requireLogin = require("../authMiddleware");
 
 const router = express.Router();
 
-router.use(async (req, res, next) => {
-  req.db = await initializeDatabase;
-  next();
-});
-
-// Protect other user routes with authentication
-router.post("/login", authenticateUser);
+router.use(requireLogin); // Apply the middleware to all routes in this router
 router.get("/", getAllUsers);
 router.post("/", createUser);
 router.put("/:id", editUser);

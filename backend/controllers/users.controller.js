@@ -1,45 +1,10 @@
-const initializeDatabase = require("../db/db-tables");
 const bcrypt = require("bcrypt");
-
-exports.authenticateUser = async (req, res) => {
-  try {
-    const connection = await initializeDatabase;
-    const { username, password } = req.body;
-
-    // Check if the user exists in the database
-    const [user] = await connection.execute(
-      "SELECT ID, username, password FROM users WHERE username = ?",
-      [username]
-    );
-
-    if (user.length === 0) {
-      res
-        .status(401)
-        .json({ message: "Authentication failed. User not found." });
-      return;
-    }
-
-    // Check if the provided password matches the stored hashed password
-    const passwordMatch = await bcrypt.compare(password, user[0].password);
-
-    if (passwordMatch) {
-      res
-        .status(200)
-        .json({ message: "Authentication successful", user: user[0] });
-    } else {
-      res
-        .status(401)
-        .json({ message: "Authentication failed. Incorrect password." });
-    }
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
+const initializeDatabase = require("../db/db-tables");
 
 exports.getAllUsers = async (req, res) => {
   try {
-    const connection = await initializeDatabase;
-    const [users] = await connection.execute("SELECT ID, username FROM users");
+    const connection = await initializeDatabase();
+    const [users] = await connection.execute("SELECT id, username FROM Users");
     console.log("Getting all users");
     res.json(users);
   } catch (err) {
@@ -50,16 +15,16 @@ exports.getAllUsers = async (req, res) => {
 
 exports.createUser = async (req, res) => {
   try {
-    const connection = await initializeDatabase;
-    const { username, password } = req.body;
+    const connection = await initializeDatabase();
+    const { username, password, email } = req.body;
 
-    // Hash the password using bcrypt
-    const hashedPassword = await bcrypt.hash(password, 10); // Adjust the cost factor as needed
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const [result] = await connection.execute(
-      "INSERT INTO users (username, password) VALUES (?, ?)",
-      [username, hashedPassword]
+      "INSERT INTO Users (username, password, email) VALUES (?, ?, ?)",
+      [username, hashedPassword, email || null]
     );
+
     console.log("Creating user");
     res.status(201).json({ ID: result.insertId, username });
   } catch (err) {
@@ -70,20 +35,20 @@ exports.createUser = async (req, res) => {
 
 exports.editUser = async (req, res) => {
   try {
-    const connection = await initializeDatabase;
+    const connection = await initializeDatabase();
     const { id } = req.params;
-    const { username, password } = req.body;
+    const { username, password, email } = req.body;
 
-    // Hash the password using bcrypt if it is provided
     let hashedPassword = password;
     if (password) {
-      hashedPassword = await bcrypt.hash(password, 10); // Adjust the cost factor as needed
+      hashedPassword = await bcrypt.hash(password, 10);
     }
 
     await connection.execute(
-      "UPDATE users SET username = ?, password = ? WHERE ID = ?",
-      [username, hashedPassword, id]
+      "UPDATE Users SET username = ?, password = ?, email = ? WHERE id = ?",
+      [username, hashedPassword, email || null, id]
     );
+
     console.log("Editing User");
     res.json({ ID: id, username });
   } catch (err) {
@@ -94,9 +59,10 @@ exports.editUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
-    const connection = await initializeDatabase;
+    const connection = await initializeDatabase();
     const { id } = req.params;
-    await connection.execute("DELETE FROM users WHERE ID = ?", [id]);
+    await connection.execute("DELETE FROM Users WHERE id = ?", [id]);
+
     console.log("Deleting user");
     res.json({
       Message: "User deleted successfully!",

@@ -20,7 +20,7 @@ async function initializeDatabase() {
       CREATE TABLE IF NOT EXISTS Categories (
         id INT AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
         name VARCHAR(500) UNIQUE NOT NULL,
-        iconUrl TEXT NULL,
+        iconUrl TEXT DEFAULT NULL,
         weight INT NOT NULL
       );
     `);
@@ -32,7 +32,7 @@ async function initializeDatabase() {
         name TEXT NOT NULL,
         category VARCHAR(500) NOT NULL,
         url TEXT NOT NULL,
-        iconUrl TEXT NULL,
+        iconUrl TEXT DEFAULT NULL,
         weight INT NOT NULL,
         FOREIGN KEY (category) REFERENCES Categories(name)
       );
@@ -52,7 +52,7 @@ async function initializeDatabase() {
       CREATE TABLE IF NOT EXISTS Users (
         id INT AUTO_INCREMENT PRIMARY KEY UNIQUE NOT NULL,
         username TEXT NOT NULL,
-        mail TEXT Null,
+        mail TEXT DEFAULT NULL,
         password TEXT NOT NULL
       );
     `);
