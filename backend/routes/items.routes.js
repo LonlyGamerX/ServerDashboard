@@ -6,6 +6,7 @@ const {
   deleteItem,
 } = require("../controllers/items.controller");
 const initializeDatabase = require("../db/db-tables");
+const { requireLogin } = require("../server");
 
 const router = express.Router();
 
@@ -15,7 +16,9 @@ router.use(async (req, res, next) => {
   next();
 });
 
+
 router.get("/", getAllItems);
+router.use(requireLogin);
 router.post("/", createItem);
 router.put("/:id", editItem);
 router.delete("/:id", deleteItem);

@@ -1,17 +1,22 @@
-// users.routes.js
 const express = require("express");
-const initializeDatabase = require("../db/db-tables");
 const {
   getAllUsers,
   createUser,
   editUser,
   deleteUser,
 } = require("../controllers/users.controller");
-const requireLogin = require("../authMiddleware");
+const initializeDatabase = require("../db/db-tables");
+const { requireLogin } = require("../server");
 
 const router = express.Router();
 
-router.use(requireLogin); // Apply the middleware to all routes in this router
+// Middleware to pass the MySQL connection to the controller
+router.use(async (req, res, next) => {
+  req.db = await initializeDatabase;
+  next();
+});
+
+router.use(requireLogin);
 router.get("/", getAllUsers);
 router.post("/", createUser);
 router.put("/:id", editUser);
